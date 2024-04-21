@@ -2,4 +2,4 @@
 
 set -xe
 
-javac -d target Main.java Encrypt.java FileManagement.java -Xlint:all
+javac -d target Main.java FileManagement.java Encrypt.java -Xlint:all
