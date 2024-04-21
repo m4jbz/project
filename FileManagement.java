@@ -1,6 +1,7 @@
 import java.security.GeneralSecurityException;
 import javax.crypto.SecretKey;
 import java.util.Scanner;
+import java.util.Arrays;
 import java.io.*;
 
 class FileManagement extends Encrypt
@@ -8,33 +9,90 @@ class FileManagement extends Encrypt
     static final String key = "papupapu";
 	static Scanner sc = new Scanner(System.in);
 
-	public int numberOfFiles()
+	public void modifyAccount()
 	{
-		int cont = 0, i = 0;
-		boolean flag = true;
+		String newMail;
+		String newPass;
+		byte numAcc;
 
-		while (flag) {
-			File fl = null;
-			if ((i+1) > 9)
-				fl = new File(String.format("files/accrypted%d.bin", (i+1)));
-			else 
-				fl = new File(String.format("files/accrypted0%d.bin", (i+1)));
-			i++;
-			if (fl.exists()) cont++;
-			else flag = false;
-		}
+		showAccounts(listOfFiles());
 
-		return cont;
+		if (listOfFiles().length != 0) {
+			System.out.print("Número de la cuenta a modificar: ");
+			numAcc = sc.nextByte();
+
+			String[] encrypted = listOfFiles();
+			String changedFile = String.format("files/account%d.txt", numAcc);
+
+			File fl = new File(encrypted[numAcc-1]);
+			File ac = new File(changedFile);
+
+			if (fl.exists()) {
+				System.out.print("Nuevo correo: ");
+				newMail = sc.next();
+				System.out.print("Nueva contraseña: ");
+				newPass = sc.next();
+
+				fl.delete();
+
+				try (BufferedWriter writer = new BufferedWriter(new FileWriter(changedFile, false))) {
+					writer.write(newMail);
+					writer.newLine();
+					writer.write(newPass);
+				} catch (IOException e) {
+					System.err.println("Error al crear el archivo: " + e.getMessage());
+				}
+
+				try {
+					SecretKey secretKey = generateSecretKey(key);
+					encryptFile(changedFile, encrypted[numAcc-1], secretKey);
+					System.out.println("Cuenta modificada con exito.");
+				} catch (IOException | GeneralSecurityException e) {
+					e.printStackTrace();
+				}
+
+				ac.delete();
+
+			} else
+				System.out.println("El archivo no existe.");
+		} else
+			System.out.println("Ni por modificar.");
+	}
+
+	public void deleteAccount()
+	{
+		byte numAcc;
+		showAccounts(listOfFiles());
+
+		if (listOfFiles().length != 0) {
+			System.out.print("Número de la cuenta a eliminar: ");
+			numAcc = sc.nextByte();
+
+			String[] encrypted = listOfFiles();
+
+			File fl = new File(encrypted[numAcc-1]);
+
+			if (fl.exists()) {
+				if(fl.delete())
+					System.out.println("La cuenta ha sido eliminada.");
+				else
+					System.out.println("La cuenta no pudo ser eliminada.");
+			} else {
+				System.out.println("El archivo no existe.");
+			}
+		
+		} else
+			System.out.println("Ni por eliminar.");
 	}
 
 	public void addAccount()
 	{
-		String[] acc = listOfFiles(numberOfFiles());
+		String[] acc = listOfFiles();
 		int lastNum = 0;
 
 		if (acc.length > 0 && acc.length < 10)
 			lastNum = Character.getNumericValue(acc[acc.length-1].charAt(16));
-		else if (acc.length > 0 && acc.length > 9)
+		else if (acc.length > 9)
 			lastNum = Integer.parseInt(String.format("%c%c", acc[acc.length-1].charAt(15) + acc[acc.length-1].charAt(16)));
 
 		System.out.print("Numero de cuentas: ");
@@ -47,34 +105,6 @@ class FileManagement extends Encrypt
 		deleteFiles(accounts, accounts.length);
 	}
 
-	public void deleteFiles(String[] files, int n)
-	{
-		for (int i = 0; i < n; ++i) {
-			File fl = new File(files[i]);
-
-			if (fl.exists()) {
-				if (!fl.delete()) {
-					System.out.println("El archivo NO se elimino.");
-				}
-			} else {
-				System.out.println("Archivo no existe.");
-			}
-		}
-	}
-
-	public String[] listOfFiles(int a)
-	{
-		String[] str = new String[a];
-		
-		for (int i = 0; i < a; ++i)
-			if ((i+1) > 9)
-				str[i] = String.format("files/accrypted%d.bin", (i+1));
-			else 
-				str[i] = String.format("files/accrypted0%d.bin", (i+1));
-
-		return str;
-	}
-
 	public void showAccounts(String[] str)
 	{
 		if (str.length > 0) {
@@ -84,14 +114,14 @@ class FileManagement extends Encrypt
 
 					String decryptedContent = decryptedFile(str[i], secretKey);
 					System.out.println("--- --- --- --- ---");
-					System.out.println(String.format("Cuenta %d: ", (i+1)));
+					System.out.println(String.format("Cuenta %d: ", (i+1))); 
 					System.out.println(decryptedContent);
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 			}
 			System.out.println("--- --- --- --- ---");
-		} else System.out.println("No hay cuentas por mostrar.");
+		} else System.out.println("No hay cuentas por mostrar."); 
 	}
 
 	public String[] requestData(int n, int m, int numAcc)
@@ -126,6 +156,21 @@ class FileManagement extends Encrypt
 		return accounts;
 	}
 
+	public String[] listOfFiles()
+	{
+		File directory = new File("files");
+		File[] files = directory.listFiles();
+		String[] str = new String[files.length];
+
+		for (int i = 0; i < files.length; ++i) {
+			str[i] = "files/"+files[i].getName();
+		}
+
+		Arrays.sort(str);
+
+		return str;
+	}
+
 	public String[] listOfBinFiles(String[] accounts, int n, int m)
 	{
 		String[] encryptedFiles = new String[m-n];
@@ -142,21 +187,6 @@ class FileManagement extends Encrypt
 		return encryptedFiles;
 	}
 
-	public void showContent(String[] encryptedAccounts)
-	{
-		for (int i = 0; i < 1; ++i) {
-			try {
-				SecretKey secretKey2 = generateSecretKey(key);
-
-				String decryptedContent = decryptedFile(encryptedAccounts[i], secretKey2);
-				System.out.println(String.format("Contenido %d: ", (i+1)));
-				System.out.println(decryptedContent);
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public void makeBinFiles(String[] accounts, String[] encryptedAccounts, int n)
 	{
 		for (int i = 0; i < n; ++i) {
@@ -167,6 +197,27 @@ class FileManagement extends Encrypt
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void deleteFiles(String[] files, int n)
+	{
+		for (int i = 0; i < n; ++i) {
+			File fl = new File(files[i]);
+
+			if (fl.exists()) {
+				if (!fl.delete()) {
+					System.out.println("El archivo NO se elimino.");
+				}
+			} else {
+				System.out.println("Archivo no existe.");
+			}
+			
+		}
+	}
+
+	public void cleanTerm()
+	{
+		System.out.print("\033[H\033[2J");
 	}
 
 }
