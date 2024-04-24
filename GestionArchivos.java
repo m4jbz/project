@@ -231,9 +231,7 @@ class GestionArchivos extends Encriptacion {
 			File fl = new File(archivos[i]);
 
 			if (fl.exists()) {
-				if (fl.delete()) {
-					System.out.println("El archivo ha sido eliminado.");
-				} else {
+				if (!fl.delete()) {
 					System.out.println("El archivo no pudo ser eliminado.");
 				}
 			} else {
