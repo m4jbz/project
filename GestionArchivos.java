@@ -9,8 +9,7 @@ class GestionArchivos extends Encriptacion
     static final String llave = "papupapu";
 	static Scanner sc = new Scanner(System.in);
 
-	public void mostrarCuentas(String[] cuentas)
-	{
+	public void mostrarCuentas(String[] cuentas) {
 		int cantCuentas = cuentas.length;
 
 		if (cantCuentas > 0) {
@@ -18,7 +17,8 @@ class GestionArchivos extends Encriptacion
 				try {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
-					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
+					String contenidoDesencriptado = archivoDesencriptado(cuentas[i],
+							llaveSecreta);
 					System.out.println("--- --- --- --- ---");
 					System.out.println(String.format("Cuenta %d: ", (i+1))); 
 					System.out.println(contenidoDesencriptado);
@@ -27,12 +27,12 @@ class GestionArchivos extends Encriptacion
 				}
 			}
 			System.out.println("--- --- --- --- ---");
-		} else 
+		} else {
 			System.out.println("No hay cuentas por mostrar."); 
+		}
 	}
 
-	public void modificarCuenta()
-	{
+	public void modificarCuenta() {
 		String nuevoCorreo;
 		String nuevaContra;
 		byte numCuentas;
@@ -47,7 +47,7 @@ class GestionArchivos extends Encriptacion
 			String original = listaDeCuentas()[numCuentas-1];
 
 			File og = new File(original);
-			File ca = new File(original);
+			File ac = new File(actualizada);
 
 			if (og.exists()) {
 				System.out.print("Nuevo correo: ");
@@ -57,7 +57,8 @@ class GestionArchivos extends Encriptacion
 
 				og.delete();
 
-				try (BufferedWriter writer = new BufferedWriter(new FileWriter(actualizada, false))) {
+				try (BufferedWriter writer = new BufferedWriter(new FileWriter(actualizada,
+								false))) {
 					writer.write(nuevoCorreo);
 					writer.newLine();
 					writer.write(nuevaContra);
@@ -73,16 +74,17 @@ class GestionArchivos extends Encriptacion
 					e.printStackTrace();
 				}
 
-				ca.delete();
+				ac.delete();
 
-			} else
+			} else {
 				System.out.println("El archivo no existe.");
-		} else
+			}
+		} else {
 			System.out.println("Ni por modificar.");
+		}
 	}
 
-	public void eliminarCuenta()
-	{
+	public void eliminarCuenta() {
 		byte numCuentas;
 		mostrarCuentas(listaDeCuentas());
 
@@ -94,28 +96,32 @@ class GestionArchivos extends Encriptacion
 			File cb = new File(cuentaABorrar);
 
 			if (cb.exists()) {
-				if (cb.delete())
+				if (cb.delete()) {
 					System.out.println("La cuenta ha sido eliminada.");
-				else
+				}
+				else {
 					System.out.println("La cuenta no pudo ser eliminada.");
-			} else
+				}
+			} else {
 				System.out.println("El archivo no existe.");
-		
-		} else System.out.println("Ni por eliminar.");
+			} } else {
+			System.out.println("Ni por eliminar.");
+		}
 	}
 
-	public void agregarCuentas()
-	{
+	public void agregarCuentas() {
 		String[] cuentas = listaDeCuentas();
 		int cantCuentas = cuentas.length;
 		int numArchivo = 0;
 		int numCuentas;
 
-		if (cantCuentas > 0 && cantCuentas < 10)
+		if (cantCuentas > 0 && cantCuentas < 10) {
 			numArchivo = Character.getNumericValue(cuentas[cantCuentas-1].charAt(16));
-		else if (cantCuentas > 9)
-			numArchivo = Integer.parseInt(String.format("%c%c", cuentas[cantCuentas-1].charAt(15) +
-				cuentas[cantCuentas-1].charAt(16)));
+		}
+		else if (cantCuentas > 9) {
+			numArchivo = Integer.parseInt(String.format("%c%c", 
+						 cuentas[cantCuentas-1].charAt(15) + cuentas[cantCuentas-1].charAt(16)));
+		}
 
 		System.out.print("Numero de cuentas: ");
 		numCuentas = sc.nextInt();
@@ -127,8 +133,7 @@ class GestionArchivos extends Encriptacion
 		eliminarArchivos(cuentasNuevas, cuentasNuevas.length);
 	}
 
-	public String[] pedirDatos(int i, int f, int numCuentas)
-	{
+	public String[] pedirDatos(int i, int f, int numCuentas) {
 		int a = 0;
 		String[] cuentas = new String[numCuentas];
 		String[] correos = new String[numCuentas];
@@ -139,10 +144,12 @@ class GestionArchivos extends Encriptacion
 			correos[a] = sc.next();
 			System.out.print(String.format("%d° Contraseña: ", (a+1)));
 			contras[a] = sc.next();
-			if ((j+1) > 9)
+			if ((j+1) > 9) {
 				cuentas[a] = String.format("files/account%d.txt", (j+1));
-			else 
+			}
+			else {
 				cuentas[a] = String.format("files/account0%d.txt", (j+1));
+			}
 			a++;
 		}
 
@@ -164,8 +171,9 @@ class GestionArchivos extends Encriptacion
 		File[] archivos = new File("files").listFiles();
 		String[] lista = new String[archivos.length];
 
-		for (int i = 0; i < archivos.length; ++i)
+		for (int i = 0; i < archivos.length; ++i) {
 			lista[i] = "files/" + archivos[i].getName();
+		}
 
 		Arrays.sort(lista);
 
@@ -178,10 +186,12 @@ class GestionArchivos extends Encriptacion
 		int a = 0;
 		
 		for (int j = i; j < f; ++j) {
-			if ((j+1) > 9)
+			if ((j+1) > 9) {
 				archivosBin[a] = String.format("files/accrypted%d.bin", (j+1));
-			else 
+			}
+			else {
 				archivosBin[a] = String.format("files/accrypted0%d.bin", (j+1));
+			}
 			a++;
 		}
 
@@ -206,8 +216,10 @@ class GestionArchivos extends Encriptacion
 			File fl = new File(archivos[i]);
 
 			if (fl.exists()) {
-				if (!fl.delete()) {
-					System.out.println("El archivo NO se elimino.");
+				if (fl.delete()) {
+					System.out.println("El archivo ha sido eliminado.");
+				} else {
+					System.out.println("El archivo no pudo ser eliminado.");
 				}
 			} else {
 				System.out.println("Archivo no existe.");
@@ -216,8 +228,8 @@ class GestionArchivos extends Encriptacion
 		}
 	}
 
-	public void limpiarTerminal()
-	{
+	public void limpiarTerminal() {
+		// codigo ANSI para limpiar la terminal
 		System.out.print("\033[H\033[2J");
 	}
 }
