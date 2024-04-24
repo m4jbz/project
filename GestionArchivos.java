@@ -4,9 +4,9 @@ import java.util.Scanner;
 import java.util.Arrays;
 import java.io.*;
 
-class GestionArchivos extends Encriptacion
-{
+class GestionArchivos extends Encriptacion {
     static final String llave = "papupapu";
+	static boolean llaveCorrecta = false;
 	static Scanner sc = new Scanner(System.in);
 
 	public void mostrarCuentas(String[] cuentas) {
@@ -17,8 +17,7 @@ class GestionArchivos extends Encriptacion
 				try {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
-					String contenidoDesencriptado = archivoDesencriptado(cuentas[i],
-							llaveSecreta);
+					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
 					System.out.println("--- --- --- --- ---");
 					System.out.println(String.format("Cuenta %d: ", (i+1))); 
 					System.out.println(contenidoDesencriptado);
@@ -75,7 +74,6 @@ class GestionArchivos extends Encriptacion
 				}
 
 				ac.delete();
-
 			} else {
 				System.out.println("El archivo no existe.");
 			}
@@ -86,6 +84,7 @@ class GestionArchivos extends Encriptacion
 
 	public void eliminarCuenta() {
 		byte numCuentas;
+
 		mostrarCuentas(listaDeCuentas());
 
 		if (listaDeCuentas().length > 0) {
@@ -104,7 +103,8 @@ class GestionArchivos extends Encriptacion
 				}
 			} else {
 				System.out.println("El archivo no existe.");
-			} } else {
+			} 
+		} else {
 			System.out.println("Ni por eliminar.");
 		}
 	}
@@ -117,8 +117,7 @@ class GestionArchivos extends Encriptacion
 
 		if (cantCuentas > 0 && cantCuentas < 10) {
 			numArchivo = Character.getNumericValue(cuentas[cantCuentas-1].charAt(16));
-		}
-		else if (cantCuentas > 9) {
+		} else if (cantCuentas > 9) {
 			numArchivo = Integer.parseInt(String.format("%c%c", 
 						 cuentas[cantCuentas-1].charAt(15) + cuentas[cantCuentas-1].charAt(16)));
 		}
@@ -134,22 +133,23 @@ class GestionArchivos extends Encriptacion
 	}
 
 	public String[] pedirDatos(int i, int f, int numCuentas) {
-		int a = 0;
 		String[] cuentas = new String[numCuentas];
 		String[] correos = new String[numCuentas];
 		String[] contras = new String[numCuentas];
+		int a = 0;
 
 		for (int j = i; j < f; ++j) {
 			System.out.print(String.format("%d° Correo: ", (a+1)));
 			correos[a] = sc.next();
 			System.out.print(String.format("%d° Contraseña: ", (a+1)));
 			contras[a] = sc.next();
+
 			if ((j+1) > 9) {
 				cuentas[a] = String.format("files/account%d.txt", (j+1));
-			}
-			else {
+			} else {
 				cuentas[a] = String.format("files/account0%d.txt", (j+1));
 			}
+
 			a++;
 		}
 
@@ -166,8 +166,24 @@ class GestionArchivos extends Encriptacion
 		return cuentas;
 	}
 
-	public String[] listaDeCuentas()
-	{
+	public void esUsuario(GestionArchivos ga, Runnable metodo) {
+		if (llaveCorrecta == false) {
+			String clave;
+			System.out.print("Escribe la clave: ");
+			clave = sc.next();
+
+			if (clave.equals(llave)) {
+				llaveCorrecta = true;
+				metodo.run();
+			} else {
+				System.out.println("ERROR: No eres usuario.");
+			}
+		} else {
+			metodo.run();
+		}
+	}
+
+	public String[] listaDeCuentas() {
 		File[] archivos = new File("files").listFiles();
 		String[] lista = new String[archivos.length];
 
@@ -175,13 +191,14 @@ class GestionArchivos extends Encriptacion
 			lista[i] = "files/" + archivos[i].getName();
 		}
 
+		/* se necesita ordenar la lista para
+		   evitar errores en el nombre de los archivos */
 		Arrays.sort(lista);
 
 		return lista;
 	}
 
-	public String[] listaDeBinarios(int i, int f)
-	{
+	public String[] listaDeBinarios(int i, int f) {
 		String[] archivosBin = new String[f-i];
 		int a = 0;
 		
@@ -198,8 +215,7 @@ class GestionArchivos extends Encriptacion
 		return archivosBin;
 	}
 
-	public void encriptarArchivos(String[] archivosTexto, String[] archivosBinarios, int n)
-	{
+	public void encriptarArchivos(String[] archivosTexto, String[] archivosBinarios, int n) {
 		for (int i = 0; i < n; ++i) {
 			try {
 				SecretKey llaveSecreta = generarLlaveSecreta(llave);
@@ -210,8 +226,7 @@ class GestionArchivos extends Encriptacion
 		}
 	}
 
-	public void eliminarArchivos(String[] archivos, int n)
-	{
+	public void eliminarArchivos(String[] archivos, int n) {
 		for (int i = 0; i < n; ++i) {
 			File fl = new File(archivos[i]);
 
@@ -224,7 +239,6 @@ class GestionArchivos extends Encriptacion
 			} else {
 				System.out.println("Archivo no existe.");
 			}
-			
 		}
 	}
 

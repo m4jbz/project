@@ -8,8 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.*;
 
-class Encriptacion 
-{
+class Encriptacion {
     public static final String ALGORITMO = "AES";
     public static final int LONGITUD_LLAVE = 256;
 
@@ -18,14 +17,14 @@ class Encriptacion
         SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
 
         random.setSeed(llaveEnBites);
-        KeyGenerator generadorLlave = KeyGenerator.getInstance(ALGORITMO);
-        generadorLlave.init(LONGITUD_LLAVE, random);
+        KeyGenerator gll = KeyGenerator.getInstance(ALGORITMO);
+        gll.init(LONGITUD_LLAVE, random);
 
-        return generadorLlave.generateKey();
+        return gll.generateKey();
     }
 
-    public void encriptarArchivo(String archivoTexto, String archivoEncriptado, SecretKey llaveSecreta)
-			throws IOException, GeneralSecurityException {
+    public void encriptarArchivo(String archivoTexto, String archivoEncriptado,
+			SecretKey llaveSecreta) throws IOException, GeneralSecurityException {
         byte[] contenido = Files.readAllBytes(Paths.get(archivoTexto));
 
         Cipher cipher = Cipher.getInstance(ALGORITMO);
