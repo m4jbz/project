@@ -9,6 +9,25 @@ class GestionArchivos extends Encriptacion
     static final String llave = "papupapu";
 	static Scanner sc = new Scanner(System.in);
 
+	public void mostrarCuentas(String[] cuentas)
+	{
+		if (cuentas.length > 0) {
+			for (int i = 0; i < cuentas.length; ++i) {
+				try {
+					SecretKey llaveSecreta = generarLlaveSecreta(llave);
+
+					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
+					System.out.println("--- --- --- --- ---");
+					System.out.println(String.format("Cuenta %d: ", (i+1))); 
+					System.out.println(contenidoDesencriptado);
+				} catch (IOException | GeneralSecurityException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.println("--- --- --- --- ---");
+		} else System.out.println("No hay cuentas por mostrar."); 
+	}
+
 	public void modificarCuenta()
 	{
 		String nuevoCorreo;
@@ -17,25 +36,25 @@ class GestionArchivos extends Encriptacion
 
 		mostrarCuentas(listaDeArchivos());
 
-		if (listaDeArchivos().length != 0) {
+		if (listaDeArchivos().length > 0) {
 			System.out.print("Número de la cuenta a modificar: ");
 			numCuentas = sc.nextByte();
 
-			String[] encrypted = listaDeArchivos();
-			String changedFile = String.format("files/account%d.txt", numCuentas);
+			String original = listaDeArchivos()[numCuentas-1];
+			String cambiado = String.format("files/account%d.txt", numCuentas);
 
-			File fl = new File(encrypted[numCuentas-1]);
-			File ac = new File(changedFile);
+			File og = new File(original);
+			File ca = new File(original);
 
-			if (fl.exists()) {
+			if (og.exists()) {
 				System.out.print("Nuevo correo: ");
 				nuevoCorreo = sc.next();
 				System.out.print("Nueva contraseña: ");
 				nuevaContra = sc.next();
 
-				fl.delete();
+				og.delete();
 
-				try (BufferedWriter writer = new BufferedWriter(new FileWriter(changedFile, false))) {
+				try (BufferedWriter writer = new BufferedWriter(new FileWriter(cambiado, false))) {
 					writer.write(nuevoCorreo);
 					writer.newLine();
 					writer.write(nuevaContra);
@@ -45,13 +64,13 @@ class GestionArchivos extends Encriptacion
 
 				try {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
-					encriptarArchivo(changedFile, encrypted[numCuentas-1], llaveSecreta);
+					encriptarArchivo(cambiado, original, llaveSecreta);
 					System.out.println("Cuenta modificada con exito.");
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 
-				ac.delete();
+				ca.delete();
 
 			} else
 				System.out.println("El archivo no existe.");
@@ -104,25 +123,6 @@ class GestionArchivos extends Encriptacion
 
 		hacerArchivosBin(cuentasNuevas, cuentasEncriptadas, numCuentas);
 		eliminarArchivos(cuentasNuevas, cuentasNuevas.length);
-	}
-
-	public void mostrarCuentas(String[] cuentas)
-	{
-		if (cuentas.length > 0) {
-			for (int i = 0; i < cuentas.length; ++i) {
-				try {
-					SecretKey llaveSecreta = generarLlaveSecreta(llave);
-
-					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
-					System.out.println("--- --- --- --- ---");
-					System.out.println(String.format("Cuenta %d: ", (i+1))); 
-					System.out.println(contenidoDesencriptado);
-				} catch (IOException | GeneralSecurityException e) {
-					e.printStackTrace();
-				}
-			}
-			System.out.println("--- --- --- --- ---");
-		} else System.out.println("No hay cuentas por mostrar."); 
 	}
 
 	public String[] pedirDatos(int i, int f, int numCuentas)

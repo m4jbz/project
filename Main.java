@@ -4,12 +4,12 @@ public class Main
 {
     public static void main(String[] args)
 	{
-		Scanner sc = new Scanner(System.in);
 		GestionArchivos ga = new GestionArchivos();
-
+		Scanner sc = new Scanner(System.in);
 		byte opcion = 0;
 
 		ga.limpiarTerminal();
+
 		do {
 			System.out.print("Escoja una opción: \n" + 
 					"1) Ver cuenta(s)\n" + 
@@ -18,6 +18,7 @@ public class Main
 					"4) Borrar cuenta\n" +
 					"5) Salir\n:");
 			opcion = sc.nextByte();
+
 			ga.limpiarTerminal();
 
 			switch (opcion) {
