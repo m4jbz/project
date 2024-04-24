@@ -17,7 +17,7 @@ métodos mencionados en el parráfo anterior.
 
 ## Compilar y ejecutar
 
-Para compilar en un sistema Linux hace falta con ejecutar el script **build.sh** y luego sim-
+Para compilar en un sistema Linux hace falta con ejecutar el script **build.sh** y luego sim
 plemente ejecutar el programa.
 
 ```bash
