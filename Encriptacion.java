@@ -25,9 +25,9 @@ class Encriptacion
         return generadorLlave.generateKey();
     }
 
-    public void encriptarArchivo(String archivoOriginal, String archivoEncriptado, SecretKey llaveSecreta) throws IOException, GeneralSecurityException
+    public void encriptarArchivo(String archivoTexto, String archivoEncriptado, SecretKey llaveSecreta) throws IOException, GeneralSecurityException
 	{
-        byte[] content = Files.readAllBytes(Paths.get(archivoOriginal));
+        byte[] content = Files.readAllBytes(Paths.get(archivoTexto));
 
         Cipher cipher = Cipher.getInstance(ALGORITMO);
         cipher.init(Cipher.ENCRYPT_MODE, llaveSecreta);

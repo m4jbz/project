@@ -23,7 +23,7 @@ public class Main
 
 			switch (opcion) {
 				case 1:
-					ga.mostrarCuentas(ga.listaDeArchivos());
+					ga.mostrarCuentas(ga.listaDeCuentas());
 					break;
 				case 2:
 					ga.agregarCuentas();
