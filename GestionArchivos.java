@@ -6,7 +6,7 @@ import java.io.*;
 
 class GestionArchivos extends Encriptacion {
     static final String llave = "papupapu";
-	static boolean llaveCorrecta = false;
+	static String clave = "";
 	static Scanner sc = new Scanner(System.in);
 
 	public void mostrarCuentas(String[] cuentas) {
@@ -167,13 +167,10 @@ class GestionArchivos extends Encriptacion {
 	}
 
 	public void esUsuario(GestionArchivos ga, Runnable metodo) {
-		if (llaveCorrecta == false) {
-			String clave;
+		if (!clave.equals(llave)) {
 			System.out.print("Escribe la clave: ");
 			clave = sc.next();
-
 			if (clave.equals(llave)) {
-				llaveCorrecta = true;
 				metodo.run();
 			} else {
 				System.out.println("ERROR: No eres usuario.");
@@ -184,6 +181,7 @@ class GestionArchivos extends Encriptacion {
 	}
 
 	public String[] listaDeCuentas() {
+		// obtiene la cantidad de archivos dentro del directorio files
 		File[] archivos = new File("files").listFiles();
 		String[] lista = new String[archivos.length];
 
@@ -205,8 +203,7 @@ class GestionArchivos extends Encriptacion {
 		for (int j = i; j < f; ++j) {
 			if ((j+1) > 9) {
 				archivosBin[a] = String.format("files/accrypted%d.bin", (j+1));
-			}
-			else {
+			} else {
 				archivosBin[a] = String.format("files/accrypted0%d.bin", (j+1));
 			}
 			a++;
