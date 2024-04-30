@@ -10,11 +10,11 @@ public class Main {
 
 		do {
 			System.out.print("Escoja una opción: \n" + 
-					"1) Ver cuenta(s)\n" + 
-					"2) Agregar cuenta(s)\n" + 
-					"3) Modificar cuenta\n" +
-					"4) Eliminar cuenta\n" +
-					"5) Salir\n:");
+											 "1) Ver cuenta(s)\n" + 
+											 "2) Agregar cuenta(s)\n" + 
+											 "3) Modificar cuenta\n" +
+											 "4) Eliminar cuenta\n" +
+											 "5) Salir\n:");
 			opcion = sc.nextByte();
 
 			ga.limpiarTerminal();
@@ -41,5 +41,5 @@ public class Main {
 		} while (opcion != 5);
 
 		sc.close();
-    }
+		}
 }
