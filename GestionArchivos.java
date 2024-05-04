@@ -2,15 +2,17 @@ import java.security.GeneralSecurityException;
 import javax.crypto.SecretKey;
 import java.util.Scanner;
 import java.util.Arrays;
+import javax.swing.*;
 import java.io.*;
 
 class GestionArchivos extends Encriptacion {
-    static final String llave = "papupapu";
+	static final String llave = "papupapu";
 	static String clave = "";
 	static Scanner sc = new Scanner(System.in);
 
 	public void mostrarCuentas(String[] cuentas) {
 		int cantCuentas = cuentas.length;
+		StringBuilder contenido = new StringBuilder();
 
 		if (cantCuentas > 0) {
 			for (int i = 0; i < cantCuentas; ++i) {
@@ -18,16 +20,14 @@ class GestionArchivos extends Encriptacion {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
 					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
-					System.out.println("--- --- --- --- ---");
-					System.out.println(String.format("Cuenta %d: ", (i+1))); 
-					System.out.println(contenidoDesencriptado);
+					contenido.append(String.format("Cuenta %d:", (i+1))).append(contenidoDesencriptado).append("\n");
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("--- --- --- --- ---");
+			JOptionPane.showMessageDialog(null, contenido);
 		} else {
-			System.out.println("No hay cuentas por mostrar."); 
+			JOptionPane.showMessageDialog(null, "No hay cuentas por mostrar.");
 		}
 	}
 
