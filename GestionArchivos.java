@@ -20,7 +20,8 @@ class GestionArchivos extends Encriptacion {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
 					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
-					contenido.append(String.format("Cuenta %d:", (i+1))).append(contenidoDesencriptado).append("\n");
+					contenido.append(String.format("Cuenta %d:\n", (i+1)))
+						.append(contenidoDesencriptado).append("\n");
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
@@ -34,25 +35,22 @@ class GestionArchivos extends Encriptacion {
 	public void modificarCuenta() {
 		String nuevoCorreo;
 		String nuevaContra;
-		byte numCuentas;
+		byte numCuenta;
 
 		mostrarCuentas(listaDeCuentas());
 
 		if (listaDeCuentas().length > 0) {
-			System.out.print("Número de la cuenta a modificar: ");
-			numCuentas = sc.nextByte();
+			numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a modificar:\n"));
 
-			String actualizada = String.format("files/account%d.txt", numCuentas);
-			String original = listaDeCuentas()[numCuentas-1];
+			String actualizada = String.format("files/account%d.txt", numCuenta);
+			String original = listaDeCuentas()[numCuenta-1];
 
 			File og = new File(original);
 			File ac = new File(actualizada);
 
 			if (og.exists()) {
-				System.out.print("Nuevo correo: ");
-				nuevoCorreo = sc.next();
-				System.out.print("Nueva contraseña: ");
-				nuevaContra = sc.next();
+				nuevoCorreo = JOptionPane.showInputDialog(null, "Nuevo correo:\n");
+				nuevaContra = JOptionPane.showInputDialog(null, "Nueva contraseña:\n");
 
 				og.delete();
 
@@ -68,44 +66,43 @@ class GestionArchivos extends Encriptacion {
 				try {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 					encriptarArchivo(actualizada, original, llaveSecreta);
-					System.out.println("Cuenta modificada con exito.");
+					JOptionPane.showMessageDialog(null, "Cuenta modificada con exito.");
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 
 				ac.delete();
 			} else {
-				System.out.println("El archivo no existe.");
+				JOptionPane.showMessageDialog(null, "El archivo no existe.");
 			}
 		} else {
-			System.out.println("Ni por modificar.");
+			JOptionPane.showMessageDialog(null, "Ni por modificar.");
 		}
 	}
 
 	public void eliminarCuenta() {
-		byte numCuentas;
+		byte numCuenta;
 
 		mostrarCuentas(listaDeCuentas());
 
 		if (listaDeCuentas().length > 0) {
-			System.out.print("Número de la cuenta a eliminar: ");
-			numCuentas = sc.nextByte();
+			numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a eliminar:\n"));
 
-			String cuentaABorrar = listaDeCuentas()[numCuentas-1];
+			String cuentaABorrar = listaDeCuentas()[numCuenta-1];
 			File cb = new File(cuentaABorrar);
 
 			if (cb.exists()) {
 				if (cb.delete()) {
-					System.out.println("La cuenta ha sido eliminada.");
+					JOptionPane.showMessageDialog(null, "La cuenta ha sido eliminada.");
 				}
 				else {
-					System.out.println("La cuenta no pudo ser eliminada.");
+					JOptionPane.showMessageDialog(null, "La cuenta no pudo ser eliminada.");
 				}
 			} else {
 				System.out.println("El archivo no existe.");
 			} 
 		} else {
-			System.out.println("Ni por eliminar.");
+			JOptionPane.showMessageDialog(null, "Ni por eliminar.");
 		}
 	}
 
@@ -113,7 +110,7 @@ class GestionArchivos extends Encriptacion {
 		String[] cuentas = listaDeCuentas();
 		int cantCuentas = cuentas.length;
 		int numArchivo = 0;
-		int numCuentas;
+		byte numCuentas;
 
 		if (cantCuentas > 0 && cantCuentas < 10) {
 			numArchivo = Character.getNumericValue(cuentas[cantCuentas-1].charAt(16));
@@ -122,8 +119,7 @@ class GestionArchivos extends Encriptacion {
 						 cuentas[cantCuentas-1].charAt(15) + cuentas[cantCuentas-1].charAt(16)));
 		}
 
-		System.out.print("Numero de cuentas: ");
-		numCuentas = sc.nextInt();
+		numCuentas = Byte.parseByte(JOptionPane.showInputDialog(null, "Numero de cuentas:\n"));
 
 		String[] cuentasNuevas = pedirDatos(numArchivo, (numArchivo + numCuentas), numCuentas);
 		String[] cuentasNuevasEncriptadas = listaDeBinarios(numArchivo, (numArchivo + numCuentas));
