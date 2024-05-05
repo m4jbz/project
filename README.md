@@ -22,5 +22,5 @@ simplemente ejecutar el programa.
 
 ```bash
 ./build.sh
-java -cp target Main
+java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -cp target Main
 ```
