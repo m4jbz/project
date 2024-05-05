@@ -163,19 +163,6 @@ class GestionArchivos extends Encriptacion {
 		return cuentas;
 	}
 
-	public void esUsuario(GestionArchivos ga, Runnable metodo) {
-		if (!clave.equals(llave)) {
-			clave = JOptionPane.showInputDialog(null, "Escribe la clave:\n");
-			if (clave.equals(llave)) {
-				metodo.run();
-			} else {
-				JOptionPane.showMessageDialog(null, "ERROR: No eres usuario.");
-			}
-		} else {
-			metodo.run();
-		}
-	}
-
 	public String[] listaDeCuentas() {
 		File[] archivos = new File("files").listFiles();
 		String[] lista = new String[archivos.length];
@@ -227,6 +214,19 @@ class GestionArchivos extends Encriptacion {
 			} else {
 				System.out.println("Archivo no existe.");
 			}
+		}
+	}
+
+	public void esUsuario(GestionArchivos ga, Runnable metodo) {
+		if (!clave.equals(llave)) {
+			clave = JOptionPane.showInputDialog(null, "Escribe la clave:\n");
+			if (clave.equals(llave)) {
+				metodo.run();
+			} else {
+				JOptionPane.showMessageDialog(null, "ERROR: No eres usuario.");
+			}
+		} else {
+			metodo.run();
 		}
 	}
 
