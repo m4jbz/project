@@ -1,8 +1,15 @@
 import java.util.Scanner;
 import javax.swing.*;
+import java.awt.*;
 
 public class Main {
 	public static void main(String[] args) {
+	UIManager.put("OptionPane.messageFont", new Font(Font.SANS_SERIF, Font.BOLD, 13));
+  UIManager.put("OptionPane.messageForeground", Color.lightGray);
+	UIManager.put("OptionPane.background", Color.darkGray);
+	UIManager.put("Button.foreground", Color.lightGray);
+	UIManager.put("Button.background", Color.darkGray);
+	UIManager.put("Panel.background", Color.darkGray);
 	GestionArchivos ga = new GestionArchivos();
 	Scanner sc = new Scanner(System.in);
 	String opcion = "0";
@@ -33,7 +40,7 @@ public class Main {
 				ga.esUsuario(ga,()->ga.eliminarCuenta());
 				break;
 			case "5":
-				System.out.println("¡Adiós!");
+				JOptionPane.showMessageDialog(null, "¡Adios!");
 				break;
 			default:
 				System.out.println("Opción no válida. Intente de nuevo.");

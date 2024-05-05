@@ -11,6 +11,7 @@ class GestionArchivos extends Encriptacion {
 	static Scanner sc = new Scanner(System.in);
 
 	public void mostrarCuentas(String[] cuentas) {
+  
 		int cantCuentas = cuentas.length;
 		StringBuilder contenido = new StringBuilder();
 
@@ -20,12 +21,14 @@ class GestionArchivos extends Encriptacion {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
 					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
+					contenido.append("--------------------------------\n");
 					contenido.append(String.format("Cuenta %d:\n", (i+1)))
 						.append(contenidoDesencriptado).append("\n");
 				} catch (IOException | GeneralSecurityException e) {
 					e.printStackTrace();
 				}
 			}
+			contenido.append("--------------------------------\n");
 			JOptionPane.showMessageDialog(null, contenido);
 		} else {
 			JOptionPane.showMessageDialog(null, "No hay cuentas por mostrar.");
@@ -135,10 +138,8 @@ class GestionArchivos extends Encriptacion {
 		int a = 0;
 
 		for (int j = i; j < f; ++j) {
-			System.out.print(String.format("%d° Correo: ", (a+1)));
-			correos[a] = sc.next();
-			System.out.print(String.format("%d° Contraseña: ", (a+1)));
-			contras[a] = sc.next();
+			correos[a] = JOptionPane.showInputDialog(null, String.format("%d° Correo:\n", (a+1)));
+			contras[a] = JOptionPane.showInputDialog(null, String.format("%d° Contraseña:\n", (a+1)));
 
 			if ((j+1) > 9) {
 				cuentas[a] = String.format("files/account%d.txt", (j+1));
@@ -164,12 +165,11 @@ class GestionArchivos extends Encriptacion {
 
 	public void esUsuario(GestionArchivos ga, Runnable metodo) {
 		if (!clave.equals(llave)) {
-			System.out.print("Escribe la clave: ");
-			clave = sc.next();
+			clave = JOptionPane.showInputDialog(null, "Escribe la clave:\n");
 			if (clave.equals(llave)) {
 				metodo.run();
 			} else {
-				System.out.println("ERROR: No eres usuario.");
+				JOptionPane.showMessageDialog(null, "ERROR: No eres usuario.");
 			}
 		} else {
 			metodo.run();
@@ -177,7 +177,6 @@ class GestionArchivos extends Encriptacion {
 	}
 
 	public String[] listaDeCuentas() {
-		// obtiene la cantidad de archivos dentro del directorio files
 		File[] archivos = new File("files").listFiles();
 		String[] lista = new String[archivos.length];
 
@@ -185,8 +184,6 @@ class GestionArchivos extends Encriptacion {
 			lista[i] = "files/" + archivos[i].getName();
 		}
 
-		/* se necesita ordenar la lista para
-		   evitar errores en el nombre de los archivos */
 		Arrays.sort(lista);
 
 		return lista;
