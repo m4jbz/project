@@ -1,9 +1,12 @@
 import java.security.GeneralSecurityException;
+import javax.swing.JOptionPane;
 import javax.crypto.SecretKey;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.FileWriter;
 import java.util.Scanner;
 import java.util.Arrays;
-import javax.swing.*;
-import java.io.*;
+import java.io.File;
 
 class GestionArchivos extends Encriptacion {
 	static final String llave = "papupapu";
@@ -20,7 +23,7 @@ class GestionArchivos extends Encriptacion {
 				try {
 					SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
-					String contenidoDesencriptado = archivoDesencriptado(cuentas[i], llaveSecreta);
+					String contenidoDesencriptado = desencriptarArchivo(cuentas[i], llaveSecreta);
 					contenido.append("--------------------------------\n");
 					contenido.append(String.format("Cuenta %d:\n", (i+1)))
 						.append(contenidoDesencriptado).append("\n");
@@ -231,7 +234,6 @@ class GestionArchivos extends Encriptacion {
 	}
 
 	public void limpiarTerminal() {
-		// codigo ANSI para limpiar la terminal
 		System.out.print("\033[H\033[2J");
 	}
 }

@@ -1,6 +1,8 @@
+import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import java.util.Scanner;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 
 public class Main {
 	public static void main(String[] args) {
@@ -10,6 +12,7 @@ public class Main {
 	UIManager.put("Button.foreground", Color.lightGray);
 	UIManager.put("Button.background", Color.darkGray);
 	UIManager.put("Panel.background", Color.darkGray);
+
 	GestionArchivos ga = new GestionArchivos();
 	Scanner sc = new Scanner(System.in);
 	String opcion = "0";
