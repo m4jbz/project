@@ -10,7 +10,7 @@
 \usepackage{helvet}
 \renewcommand{\familydefault}{\sfdefault}
 \pagestyle{empty}
-	
+
 \begin{document}
 
 \section*{Encriptación AES (Advanced Encryption
@@ -27,7 +27,7 @@ clave de 128, 192 y 256 bits. Este opera en una matriz de 4x4
 
 \begin{itemize}
 \item
-	\textbf{AES-128}: este método utiliza una longitud de clave de 128 bits para el
+  \textbf{AES-128}: este método utiliza una longitud de clave de 128 bits para el
   cifrado y el descifrado, lo que da lugar a 10 series de cifrado con
   3,4 x 1038 combinaciones potenciales diferentes.
 \item
@@ -50,25 +50,25 @@ clave de 128, 192 y 256 bits. Este opera en una matriz de 4x4
 \item \textbf{SubBytes}: Cada byte del bloque de datos se sustituye por otro byte según una tabla de búsqueda (S-Box). Esto confunde los datos y dificulta su análisis.
 
 \begin{center}
-	\includegraphics[width=0.4\textwidth]{images/SubBytes.png}
+  \includegraphics[width=0.4\textwidth]{images/SubBytes.png}
 \end{center}
 
 \item \textbf{ShiftRows}: Los bytes en las filas del bloque de datos se desplazan circularmente hacia la izquierda. Esto mezcla los datos y evita patrones predecibles.
 
 \begin{center}
-	\includegraphics[width=0.4\textwidth]{images/ShiftRows.png}
+  \includegraphics[width=0.4\textwidth]{images/ShiftRows.png}
 \end{center}
 
 \item \textbf{MixColumns}: Cada columna del bloque de datos se transforma mediante una operación algebraica. Esto proporciona una difusión adicional de los datos.
 
 \begin{center}
-	\includegraphics[width=0.4\textwidth]{images/MixColumn.png}
+  \includegraphics[width=0.4\textwidth]{images/MixColumn.png}
 \end{center}
 
 \item \textbf{AddRoundKey}: Se realiza una operación XOR entre el bloque de datos y una subclave derivada de la clave principal para esa ronda. Esto añade una nueva capa de seguridad.
 
 \begin{center}
-	\includegraphics[width=0.4\textwidth]{images/AddRoundKey.png}
+  \includegraphics[width=0.4\textwidth]{images/AddRoundKey.png}
 \end{center}
 
 \end{enumerate}

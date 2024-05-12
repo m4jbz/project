@@ -9,231 +9,230 @@ import java.util.Arrays;
 import java.io.File;
 
 class GestionArchivos extends Encriptacion {
-	static final String llave = "papupapu";
-	static String clave = "";
-	static Scanner sc = new Scanner(System.in);
+  static final String llave = "papupapu";
+  static String clave = "";
+  static Scanner sc = new Scanner(System.in);
 
-	public void mostrarCuentas(String[] cuentas) {
-  
-		int cantCuentas = cuentas.length;
-		StringBuilder contenido = new StringBuilder();
+  public void mostrarCuentas(String[] cuentas) {
+    int cantCuentas = cuentas.length;
+    StringBuilder contenido = new StringBuilder();
 
-		if (cantCuentas > 0) {
-			for (int i = 0; i < cantCuentas; ++i) {
-				try {
-					SecretKey llaveSecreta = generarLlaveSecreta(llave);
+    if (cantCuentas > 0) {
+      for (int i = 0; i < cantCuentas; ++i) {
+        try {
+          SecretKey llaveSecreta = generarLlaveSecreta(llave);
 
-					String contenidoDesencriptado = desencriptarArchivo(cuentas[i], llaveSecreta);
-					contenido.append("--------------------------------\n");
-					contenido.append(String.format("Cuenta %d:\n", (i+1)))
-						.append(contenidoDesencriptado).append("\n");
-				} catch (IOException | GeneralSecurityException e) {
-					e.printStackTrace();
-				}
-			}
-			contenido.append("--------------------------------\n");
-			JOptionPane.showMessageDialog(null, contenido);
-		} else {
-			JOptionPane.showMessageDialog(null, "No hay cuentas por mostrar.");
-		}
-	}
+          String contenidoDesencriptado = desencriptarArchivo(cuentas[i], llaveSecreta);
+          contenido.append("--------------------------------\n");
+          contenido.append(String.format("Cuenta %d:\n", (i+1)))
+            .append(contenidoDesencriptado).append("\n");
+        } catch (IOException | GeneralSecurityException e) {
+          e.printStackTrace();
+        }
+      }
+      contenido.append("--------------------------------\n");
+      JOptionPane.showMessageDialog(null, contenido);
+    } else {
+      JOptionPane.showMessageDialog(null, "No hay cuentas por mostrar.");
+    }
+  }
 
-	public void modificarCuenta() {
-		String nuevoCorreo;
-		String nuevaContra;
-		byte numCuenta;
+  public void agregarCuentas() {
+    String[] cuentas = listaDeCuentas();
+    int cantCuentas = cuentas.length;
+    int numArchivo = 0;
+    byte numCuentas;
 
-		mostrarCuentas(listaDeCuentas());
+    if (cantCuentas > 0 && cantCuentas < 10) {
+      numArchivo = Character.getNumericValue(cuentas[cantCuentas-1].charAt(16));
+    } else if (cantCuentas > 9) {
+      numArchivo = Integer.parseInt(String.format("%c%c", 
+             cuentas[cantCuentas-1].charAt(15) + cuentas[cantCuentas-1].charAt(16)));
+    }
 
-		if (listaDeCuentas().length > 0) {
-			numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a modificar:\n"));
+    numCuentas = Byte.parseByte(JOptionPane.showInputDialog(null, "Numero de cuentas:\n"));
 
-			String actualizada = String.format("files/account%d.txt", numCuenta);
-			String original = listaDeCuentas()[numCuenta-1];
+    String[] cuentasNuevas = pedirDatos(numArchivo, (numArchivo + numCuentas), numCuentas);
+    String[] cuentasNuevasEncriptadas = listaDeBinarios(numArchivo, (numArchivo + numCuentas));
 
-			File og = new File(original);
-			File ac = new File(actualizada);
+    encriptarArchivos(cuentasNuevas, cuentasNuevasEncriptadas, numCuentas);
+    eliminarArchivos(cuentasNuevas, cuentasNuevas.length);
+  }
 
-			if (og.exists()) {
-				nuevoCorreo = JOptionPane.showInputDialog(null, "Nuevo correo:\n");
-				nuevaContra = JOptionPane.showInputDialog(null, "Nueva contraseña:\n");
+  public void modificarCuenta() {
+    String nuevoCorreo;
+    String nuevaContra;
+    byte numCuenta;
 
-				og.delete();
+    mostrarCuentas(listaDeCuentas());
 
-				try (BufferedWriter writer = new BufferedWriter(new FileWriter(actualizada,
-								false))) {
-					writer.write(nuevoCorreo);
-					writer.newLine();
-					writer.write(nuevaContra);
-				} catch (IOException e) {
-					System.err.println("Error al crear el archivo: " + e.getMessage());
-				}
+    if (listaDeCuentas().length > 0) {
+      numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a modificar:\n"));
 
-				try {
-					SecretKey llaveSecreta = generarLlaveSecreta(llave);
-					encriptarArchivo(actualizada, original, llaveSecreta);
-					JOptionPane.showMessageDialog(null, "Cuenta modificada con exito.");
-				} catch (IOException | GeneralSecurityException e) {
-					e.printStackTrace();
-				}
+      String actualizada = String.format("files/account%d.txt", numCuenta);
+      String original = listaDeCuentas()[numCuenta-1];
 
-				ac.delete();
-			} else {
-				JOptionPane.showMessageDialog(null, "El archivo no existe.");
-			}
-		} else {
-			JOptionPane.showMessageDialog(null, "Ni por modificar.");
-		}
-	}
+      File og = new File(original);
+      File ac = new File(actualizada);
 
-	public void eliminarCuenta() {
-		byte numCuenta;
+      if (og.exists()) {
+        nuevoCorreo = JOptionPane.showInputDialog(null, "Nuevo correo:\n");
+        nuevaContra = JOptionPane.showInputDialog(null, "Nueva contraseña:\n");
 
-		mostrarCuentas(listaDeCuentas());
+        og.delete();
 
-		if (listaDeCuentas().length > 0) {
-			numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a eliminar:\n"));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(actualizada,
+                false))) {
+          writer.write(nuevoCorreo);
+          writer.newLine();
+          writer.write(nuevaContra);
+        } catch (IOException e) {
+          System.err.println("Error al crear el archivo: " + e.getMessage());
+        }
 
-			String cuentaABorrar = listaDeCuentas()[numCuenta-1];
-			File cb = new File(cuentaABorrar);
+        try {
+          SecretKey llaveSecreta = generarLlaveSecreta(llave);
+          encriptarArchivo(actualizada, original, llaveSecreta);
+          JOptionPane.showMessageDialog(null, "Cuenta modificada con exito.");
+        } catch (IOException | GeneralSecurityException e) {
+          e.printStackTrace();
+        }
 
-			if (cb.exists()) {
-				if (cb.delete()) {
-					JOptionPane.showMessageDialog(null, "La cuenta ha sido eliminada.");
-				}
-				else {
-					JOptionPane.showMessageDialog(null, "La cuenta no pudo ser eliminada.");
-				}
-			} else {
-				System.out.println("El archivo no existe.");
-			} 
-		} else {
-			JOptionPane.showMessageDialog(null, "Ni por eliminar.");
-		}
-	}
+        ac.delete();
+      } else {
+        JOptionPane.showMessageDialog(null, "El archivo no existe.");
+      }
+    } else {
+      JOptionPane.showMessageDialog(null, "Ni por modificar.");
+    }
+  }
 
-	public void agregarCuentas() {
-		String[] cuentas = listaDeCuentas();
-		int cantCuentas = cuentas.length;
-		int numArchivo = 0;
-		byte numCuentas;
+  public void eliminarCuenta() {
+    byte numCuenta;
 
-		if (cantCuentas > 0 && cantCuentas < 10) {
-			numArchivo = Character.getNumericValue(cuentas[cantCuentas-1].charAt(16));
-		} else if (cantCuentas > 9) {
-			numArchivo = Integer.parseInt(String.format("%c%c", 
-						 cuentas[cantCuentas-1].charAt(15) + cuentas[cantCuentas-1].charAt(16)));
-		}
+    mostrarCuentas(listaDeCuentas());
 
-		numCuentas = Byte.parseByte(JOptionPane.showInputDialog(null, "Numero de cuentas:\n"));
+    if (listaDeCuentas().length > 0) {
+      numCuenta = Byte.parseByte(JOptionPane.showInputDialog(null, "Número de la cuenta a eliminar:\n"));
 
-		String[] cuentasNuevas = pedirDatos(numArchivo, (numArchivo + numCuentas), numCuentas);
-		String[] cuentasNuevasEncriptadas = listaDeBinarios(numArchivo, (numArchivo + numCuentas));
+      String cuentaABorrar = listaDeCuentas()[numCuenta-1];
+      File cb = new File(cuentaABorrar);
 
-		encriptarArchivos(cuentasNuevas, cuentasNuevasEncriptadas, numCuentas);
-		eliminarArchivos(cuentasNuevas, cuentasNuevas.length);
-	}
+      if (cb.exists()) {
+        if (cb.delete()) {
+          JOptionPane.showMessageDialog(null, "La cuenta ha sido eliminada.");
+        }
+        else {
+          JOptionPane.showMessageDialog(null, "La cuenta no pudo ser eliminada.");
+        }
+      } else {
+        System.out.println("El archivo no existe.");
+      } 
+    } else {
+      JOptionPane.showMessageDialog(null, "Ni por eliminar.");
+    }
+  }
 
-	public String[] pedirDatos(int i, int f, int numCuentas) {
-		String[] cuentas = new String[numCuentas];
-		String[] correos = new String[numCuentas];
-		String[] contras = new String[numCuentas];
-		int a = 0;
+  public void esUsuario(GestionArchivos ga, Runnable metodo) {
+    if (!clave.equals(llave)) {
+      clave = JOptionPane.showInputDialog(null, "Escribe la clave:\n");
+      if (clave.equals(llave)) {
+        metodo.run();
+      } else {
+        JOptionPane.showMessageDialog(null, "ERROR: No eres usuario.");
+      }
+    } else {
+      metodo.run();
+    }
+  }
 
-		for (int j = i; j < f; ++j) {
-			correos[a] = JOptionPane.showInputDialog(null, String.format("%d° Correo:\n", (a+1)));
-			contras[a] = JOptionPane.showInputDialog(null, String.format("%d° Contraseña:\n", (a+1)));
+  public String[] pedirDatos(int i, int f, int numCuentas) {
+    String[] cuentas = new String[numCuentas];
+    String[] correos = new String[numCuentas];
+    String[] contras = new String[numCuentas];
+    int a = 0;
 
-			if ((j+1) > 9) {
-				cuentas[a] = String.format("files/account%d.txt", (j+1));
-			} else {
-				cuentas[a] = String.format("files/account0%d.txt", (j+1));
-			}
+    for (int j = i; j < f; ++j) {
+      correos[a] = JOptionPane.showInputDialog(null, String.format("%d° Correo:\n", (a+1)));
+      contras[a] = JOptionPane.showInputDialog(null, String.format("%d° Contraseña:\n", (a+1)));
 
-			a++;
-		}
+      if ((j+1) > 9) {
+        cuentas[a] = String.format("files/account%d.txt", (j+1));
+      } else {
+        cuentas[a] = String.format("files/account0%d.txt", (j+1));
+      }
 
-		for (int j = 0; j < (f - i); ++j) {
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(cuentas[j], false))) {
-				writer.write(correos[j]);
-				writer.newLine();
-				writer.write(contras[j]);
-			} catch (IOException e) {
-				System.err.println("Error al crear el archivo: " + e.getMessage());
-			}
-		}
+      a++;
+    }
 
-		return cuentas;
-	}
+    for (int j = 0; j < (f - i); ++j) {
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(cuentas[j], false))) {
+        writer.write(correos[j]);
+        writer.newLine();
+        writer.write(contras[j]);
+      } catch (IOException e) {
+        System.err.println("Error al crear el archivo: " + e.getMessage());
+      }
+    }
 
-	public String[] listaDeCuentas() {
-		File[] archivos = new File("files").listFiles();
-		String[] lista = new String[archivos.length];
+    return cuentas;
+  }
 
-		for (int i = 0; i < archivos.length; ++i) {
-			lista[i] = "files/" + archivos[i].getName();
-		}
+  public String[] listaDeCuentas() {
+    File[] archivos = new File("files").listFiles();
+    String[] lista = new String[archivos.length];
 
-		Arrays.sort(lista);
+    for (int i = 0; i < archivos.length; ++i) {
+      lista[i] = "files/" + archivos[i].getName();
+    }
 
-		return lista;
-	}
+    Arrays.sort(lista);
 
-	public String[] listaDeBinarios(int i, int f) {
-		String[] archivosBin = new String[f-i];
-		int a = 0;
-		
-		for (int j = i; j < f; ++j) {
-			if ((j+1) > 9) {
-				archivosBin[a] = String.format("files/accrypted%d.bin", (j+1));
-			} else {
-				archivosBin[a] = String.format("files/accrypted0%d.bin", (j+1));
-			}
-			a++;
-		}
+    return lista;
+  }
 
-		return archivosBin;
-	}
+  public String[] listaDeBinarios(int i, int f) {
+    String[] archivosBin = new String[f-i];
+    int a = 0;
 
-	public void encriptarArchivos(String[] archivosTexto, String[] archivosBinarios, int n) {
-		for (int i = 0; i < n; ++i) {
-			try {
-				SecretKey llaveSecreta = generarLlaveSecreta(llave);
-				encriptarArchivo(archivosTexto[i], archivosBinarios[i], llaveSecreta);
-			} catch (IOException | GeneralSecurityException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    for (int j = i; j < f; ++j) {
+      if ((j+1) > 9) {
+        archivosBin[a] = String.format("files/accrypted%d.bin", (j+1));
+      } else {
+        archivosBin[a] = String.format("files/accrypted0%d.bin", (j+1));
+      }
+      a++;
+    }
 
-	public void eliminarArchivos(String[] archivos, int n) {
-		for (int i = 0; i < n; ++i) {
-			File fl = new File(archivos[i]);
+    return archivosBin;
+  }
 
-			if (fl.exists()) {
-				if (!fl.delete()) {
-					System.out.println("El archivo no pudo ser eliminado.");
-				}
-			} else {
-				System.out.println("Archivo no existe.");
-			}
-		}
-	}
+  public void encriptarArchivos(String[] archivosTexto, String[] archivosBinarios, int n) {
+    for (int i = 0; i < n; ++i) {
+      try {
+        SecretKey llaveSecreta = generarLlaveSecreta(llave);
+        encriptarArchivo(archivosTexto[i], archivosBinarios[i], llaveSecreta);
+      } catch (IOException | GeneralSecurityException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-	public void esUsuario(GestionArchivos ga, Runnable metodo) {
-		if (!clave.equals(llave)) {
-			clave = JOptionPane.showInputDialog(null, "Escribe la clave:\n");
-			if (clave.equals(llave)) {
-				metodo.run();
-			} else {
-				JOptionPane.showMessageDialog(null, "ERROR: No eres usuario.");
-			}
-		} else {
-			metodo.run();
-		}
-	}
+  public void eliminarArchivos(String[] archivos, int n) {
+    for (int i = 0; i < n; ++i) {
+      File fl = new File(archivos[i]);
 
-	public void limpiarTerminal() {
-		System.out.print("\033[H\033[2J");
-	}
+      if (fl.exists()) {
+        if (!fl.delete()) {
+          System.out.println("El archivo no pudo ser eliminado.");
+        }
+      } else {
+        System.out.println("Archivo no existe.");
+      }
+    }
+  }
+
+  public void limpiarTerminal() {
+    System.out.print("\033[H\033[2J");
+  }
 }
