@@ -8,13 +8,61 @@
 \usepackage{fancyhdr}
 \usepackage{parskip}
 \usepackage{helvet}
+\usepackage{xcolor}
+\usepackage{hyperref}
 \renewcommand{\familydefault}{\sfdefault}
+\definecolor{light-gray}{gray}{0.95}
+\newcommand{\code}[1]{\colorbox{light-gray}{\texttt{#1}}}
 \pagestyle{empty}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan
+}
 
 \begin{document}
 
-\section*{Encriptación AES (Advanced Encryption
-Standard)}\label{encriptaciuxf3n-aes-advanced-encryption-standard}
+\section*{Proyecto Archivos}
+
+\subsection*{Funcionamiento del programa}
+
+El proposito de este programa es representar las funciones basicas de una base de datos (agregar, mostrar, modificar 
+y eliminar), en Java y utilizando archivos de texto y binarios.
+El programa consta de tres clases con los nombres: \textbf{Main}, \textbf{Encriptacion} y \textbf{GestionarArchivos}.
+La clase Main sólo consta de un menú que no es mas que un ciclo \code{do while} y la condición \code{switch} en 
+la cual cada caso representa un método a ejecutar si dicho caso es seleccionado.
+
+Por parte de la clase Encriptacion tiene como funcionalidad el encriptar, desencriptar y generar llaves seguras para
+la ejecución de las funciones anteriormente mencionadas de forma correcta. Esta clase utiliza en su mayoría cuatro otras
+clases por parte de Java que son \code{Cipher}, \code{SecureRandom}, \code{SecretKey} y \code{KeyGenerator}, las cuales se
+encargan de hacer el proceso de encriptado en conjunto con el algoritmo \hyperref[aes]{AES}.
+
+En la clase GestionarArchivos como su nombre lo indica se encarga de crear y eliminar archivos dependiendo del método
+que se haya escogido en el menú. Dichos métodos a su vez se encuentran en esta clase, estos son: 
+
+\begin{itemize}
+  \item \code{agregarCuentas}
+  \item \code{mostrarCuentas}
+  \item \code{modificarCuentas}
+  \item \code{eliminarCuentas}
+  \item \code{pedirDatos}.
+\end{itemize}
+
+\subsection*{Conceptos nuevos}
+
+\subsubsection*{Try-Catch}
+\code{try - catch} es un mecanismo para poder capturar errores que ocurren en la ejecución del programa, y así tener un programa
+más tolerante a fallas y errores.
+
+\subsubsection*{Throws}
+\code{throws} es la forma en Java de lanzar un excepcion (cualquiera) dentro de un método, para código posible a fallar
+o dar error durante la ejecución, por lo que al ser utilizado en métodos, este debe estar en la firma del mismo.
+
+\subsubsection*{Runnable}
+
+\subsection*{Encriptación AES (Advanced Encryption
+Standard)}\label{aes}
 
 Como todos los métodos de encriptación, el AES convierte el texto sin
 formato en un código que sólo puede descifrar quien tenga la clave.
@@ -23,7 +71,7 @@ formato en un código que sólo puede descifrar quien tenga la clave.
 clave de 128, 192 y 256 bits. Este opera en una matriz de 4x4
 \textbf{bytes} llamada \emph{state}.
 
-\subsection*{Tipos de AES}\label{tipos-de-aes}
+\subsubsection*{Tipos de AES}\label{tipos-de-aes}
 
 \begin{itemize}
 \item
@@ -40,7 +88,7 @@ clave de 128, 192 y 256 bits. Este opera en una matriz de 4x4
   1,1 x 1077 combinaciones potenciales diferentes.
 \end{itemize}
 
-\subsection*{Pasos del sistema AES}\label{pasos-del-sistema-aes}
+\subsubsection*{Pasos del sistema AES}\label{pasos-del-sistema-aes}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
