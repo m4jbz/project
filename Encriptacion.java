@@ -25,7 +25,7 @@ class Encriptacion {
       return gll.generateKey();
   }
 
-	public void encriptarArchivo(String archivoTexto, String archivoBin,
+  public void encriptarArchivo(String archivoTexto, String archivoBin,
                                SecretKey llaveSecreta)
                                throws IOException, GeneralSecurityException {
       byte[] contenido = Files.readAllBytes(Paths.get(archivoTexto));
