@@ -15,7 +15,7 @@ public class Main {
 
   GestionArchivos ga = new GestionArchivos();
   Scanner sc = new Scanner(System.in);
-  String opcion = "0";
+  String opcion;
 
   ga.limpiarTerminal();
 
