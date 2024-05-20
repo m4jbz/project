@@ -1,14 +1,14 @@
-import java.security.GeneralSecurityException;
 import javax.swing.JOptionPane;
-import javax.crypto.SecretKey;
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileWriter;
+import java.io.FileReader;
 import java.util.Scanner;
 import java.util.Arrays;
 import java.io.File;
 
-class GestionArchivos extends Encriptacion {
+class GestionArchivos {
   static final String llave = "papupapu";
   static String clave = "";
   static Scanner sc = new Scanner(System.in);
@@ -19,16 +19,17 @@ class GestionArchivos extends Encriptacion {
 
     if (cantCuentas > 0) {
       for (int i = 0; i < cantCuentas; ++i) {
-        try {
-          SecretKey llaveSecreta = generarLlaveSecreta(llave);
-
-          String contenidoDesencriptado = desencriptarArchivo(cuentas[i], llaveSecreta);
           contenido.append("--------------------------------\n");
-          contenido.append(String.format("Cuenta %d:\n", (i+1)))
-            .append(contenidoDesencriptado).append("\n");
-        } catch (IOException | GeneralSecurityException e) {
-          e.printStackTrace();
-        }
+          contenido.append(String.format("Cuenta %d:\n", (i+1)));
+
+          try (BufferedReader br = new BufferedReader(new FileReader(cuentas[i]))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+              contenido.append(linea + "\n");
+            }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
       }
       contenido.append("--------------------------------\n");
       JOptionPane.showMessageDialog(null, contenido);
@@ -53,10 +54,6 @@ class GestionArchivos extends Encriptacion {
     numCuentas = Byte.parseByte(JOptionPane.showInputDialog(null, "Numero de cuentas:\n"));
 
     String[] cuentasNuevas = pedirDatos(numArchivo, (numArchivo + numCuentas), numCuentas);
-    String[] cuentasNuevasEncriptadas = listaDeBinarios(numArchivo, (numArchivo + numCuentas));
-
-    encriptarArchivos(cuentasNuevas, cuentasNuevasEncriptadas, numCuentas);
-    eliminarArchivos(cuentasNuevas, cuentasNuevas.length);
   }
 
   public void modificarCuenta() {
@@ -73,7 +70,6 @@ class GestionArchivos extends Encriptacion {
       String original = listaDeCuentas()[numCuenta-1];
 
       File og = new File(original);
-      File ac = new File(actualizada);
 
       if (og.exists()) {
         nuevoCorreo = JOptionPane.showInputDialog(null, "Nuevo correo:\n");
@@ -86,19 +82,10 @@ class GestionArchivos extends Encriptacion {
           writer.write(nuevoCorreo);
           writer.newLine();
           writer.write(nuevaContra);
+          JOptionPane.showMessageDialog(null, "Cuenta modificada con exito.");
         } catch (IOException e) {
           System.err.println("Error al crear el archivo: " + e.getMessage());
         }
-
-        try {
-          SecretKey llaveSecreta = generarLlaveSecreta(llave);
-          encriptarArchivo(actualizada, original, llaveSecreta);
-          JOptionPane.showMessageDialog(null, "Cuenta modificada con exito.");
-        } catch (IOException | GeneralSecurityException e) {
-          e.printStackTrace();
-        }
-
-        ac.delete();
       } else {
         JOptionPane.showMessageDialog(null, "El archivo no existe.");
       }
@@ -191,33 +178,6 @@ class GestionArchivos extends Encriptacion {
     return lista;
   }
 
-  public String[] listaDeBinarios(int i, int f) {
-    String[] archivosBin = new String[f-i];
-    int a = 0;
-
-    for (int j = i; j < f; ++j) {
-      if ((j+1) > 9) {
-        archivosBin[a] = String.format("files/accrypted%d.bin", (j+1));
-      } else {
-        archivosBin[a] = String.format("files/accrypted0%d.bin", (j+1));
-      }
-      a++;
-    }
-
-    return archivosBin;
-  }
-
-  public void encriptarArchivos(String[] archivosTexto, String[] archivosBinarios, int n) {
-    for (int i = 0; i < n; ++i) {
-      try {
-        SecretKey llaveSecreta = generarLlaveSecreta(llave);
-        encriptarArchivo(archivosTexto[i], archivosBinarios[i], llaveSecreta);
-      } catch (IOException | GeneralSecurityException e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
   public void eliminarArchivos(String[] archivos, int n) {
     for (int i = 0; i < n; ++i) {
       File fl = new File(archivos[i]);
@@ -230,9 +190,5 @@ class GestionArchivos extends Encriptacion {
         System.out.println("Archivo no existe.");
       }
     }
-  }
-
-  public void limpiarTerminal() {
-    System.out.print("\033[H\033[2J");
   }
 }

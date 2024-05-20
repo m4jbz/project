@@ -17,8 +17,6 @@ public class Main {
   Scanner sc = new Scanner(System.in);
   String opcion;
 
-  ga.limpiarTerminal();
-
   do {
     opcion = JOptionPane.showInputDialog(null,
                      "Escoja una opción: \n" + 
@@ -27,8 +25,6 @@ public class Main {
                      "3) Modificar cuenta\n" +
                      "4) Eliminar cuenta\n" +
                      "5) Salir");
-   ga.limpiarTerminal();
-
     switch (opcion) {
       case "1":
         ga.esUsuario(ga,()->ga.mostrarCuentas(ga.listaDeCuentas()));
